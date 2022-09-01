@@ -5,11 +5,14 @@ import clear from "clear";
 import figlet from "figlet";
 import { program } from "commander";
 import glob from "glob";
-import { isDataFile, processFile } from "./generator";
 import path from "path";
-import { createGeneratorResolver } from "./createGeneratorResolver";
-import { createFileWriter } from "./createFileWriter";
 import fs from "fs";
+import {
+  isDataFile,
+  processFile,
+  createGeneratorResolver,
+  createFileWriter,
+} from "ymlgen";
 
 type Options = {
   c: string;

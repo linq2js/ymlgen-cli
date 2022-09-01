@@ -2,7 +2,7 @@
   "tsconfig": "./packages/ymlgen/tsconfig.json",
   "entryPoints": [
     "./packages/ymlgen/lib/main.ts",
-    "./packages/ymlgen/lib/cli.ts"
+    "./packages/ymlgen-cli/lib/cli.ts"
   ],
   "out": "./docs"
 }

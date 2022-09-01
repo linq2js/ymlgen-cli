@@ -1,21 +1,28 @@
 {
-  "name": "ymlgen",
+  "name": "ymlgen-cli",
   "version": "0.0.4",
   "main": "./dist/main.js",
   "types": "dist/main.d.ts",
+  "bin": {
+    "ymlgen": "./dist/cli.js"
+  },
   "scripts": {
-    "test": "jest",
+    "test": "ts-node lib/cli.ts '**/*.+(yaml|yml)'",
     "prepublishOnly": "yarn test && yarn && yarn build",
+    "start": "nodemon --watch 'lib/**/*.ts' --exec 'ts-node' lib/cli.ts",
+    "start:windows": "nodemon --watch 'lib/**/*.ts' --exec \"npx ts-node\" lib/cli.ts",
     "create": "yarn build && yarn test",
-    "build": "tsc"
+    "build": "tsc",
+    "local": "sudo yarn -G && ymlgen",
+    "refresh": "rm -rf ./node_modules ./yarn-lock.json && yarn"
   },
   "dependencies": {
-    "yamljs": "0.3.0",
     "chalk": "4.1.2",
     "clear": "^0.1.0",
     "commander": "^9.4.0",
     "figlet": "^1.5.2",
-    "glob": "^8.0.3"
+    "glob": "^8.0.3",
+    "ymlgen": "^0.0.4"
   },
   "devDependencies": {},
   "keywords": [

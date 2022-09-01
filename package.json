@@ -8,12 +8,15 @@
     "publish-all": "lerna publish",
     "bootstrap": "lerna bootstrap"
   },
+  "dependencies": {},
   "devDependencies": {
     "esbuild": "^0.14.27",
     "gzip-size-cli": "^5.1.0",
     "lerna": "^4.0.0",
     "prettier": "^2.6.0",
     "rollup": "^2.70.1",
+    "commander": "9.4.0",
+    "yamljs": "0.3.0",
     "rollup-plugin-terser": "^7.0.2",
     "rollup-plugin-uglify": "^6.0.4",
     "ts-jest": "^27.1.3",
@@ -25,6 +28,13 @@
     "@typescript-eslint/parser": "^5.31.0",
     "@types/node": "^18.7.14",
     "ts-node": "^10.9.1",
-    "typescript": "^4.8.2"
+    "typescript": "^4.8.2",
+    "@types/clear": "^0.1.2",
+    "@types/figlet": "^1.5.5",
+    "@types/glob": "^7.2.0",
+    "@types/vscode": "^1.70.0",
+    "@types/yamljs": "^0.2.31",
+    "nodemon": "^2.0.19",
+    "ymlgen": "0.0.4"
   }
 }
