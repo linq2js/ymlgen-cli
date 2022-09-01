@@ -1,6 +1,6 @@
 {
   "name": "ymlgen",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "main": "./dist/main.js",
   "types": "dist/main.d.ts",
   "scripts": {
@@ -10,14 +10,13 @@
     "build": "tsc"
   },
   "dependencies": {
-    "yamljs": "0.3.0",
     "chalk": "4.1.2",
     "clear": "^0.1.0",
     "commander": "^9.4.0",
     "figlet": "^1.5.2",
-    "glob": "^8.0.3"
+    "glob": "^8.0.3",
+    "yamljs": "0.3.0"
   },
-  "devDependencies": {},
   "keywords": [
     "Template",
     "Generator",
