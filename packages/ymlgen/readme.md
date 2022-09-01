@@ -29,7 +29,7 @@ A generator for YML/YAML files
 
 The template file must contain header, the header must follow the format below
 
-```yml
+```yaml
 # ymlgen: generatorName, *.fileExtension
 ```
 
@@ -68,7 +68,7 @@ module.exports = async (context) => {
 
 `/yourWorkspaceDir/test/list.yml`
 
-```yml
+```yaml
 # ymlgen: list, *.html
 - item1
 - item2
