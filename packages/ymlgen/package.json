@@ -1,6 +1,6 @@
 {
   "name": "ymlgen",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "main": "./dist/main.js",
   "types": "dist/main.d.ts",
   "bin": {
@@ -21,17 +21,17 @@
     "clear": "^0.1.0",
     "commander": "^9.4.0",
     "figlet": "^1.5.2",
-    "yargs": "^17.5.1",
+    "glob": "^8.0.3",
     "yamljs": "0.3.0",
-    "glob": "^8.0.3"
+    "yargs": "^17.5.1"
   },
   "devDependencies": {
     "@types/clear": "^0.1.2",
     "@types/figlet": "^1.5.5",
-    "nodemon": "^2.0.19",
     "@types/glob": "^7.2.0",
     "@types/vscode": "^1.70.0",
-    "@types/yamljs": "^0.2.31"
+    "@types/yamljs": "^0.2.31",
+    "nodemon": "^2.0.19"
   },
   "keywords": [
     "Template",
