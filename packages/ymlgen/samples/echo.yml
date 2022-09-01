@@ -1,0 +1,5 @@
+# ymlgen:generator echo
+# ymlgen:output *.gen.js
+
+aaa: 1
+bbb: 2

@@ -1,0 +1,1 @@
+const data = {"aaa":1,"bbb":2}

@@ -1,0 +1,49 @@
+{
+  "name": "ymlgen",
+  "version": "0.0.1",
+  "main": "./dist/main.js",
+  "types": "dist/main.d.ts",
+  "bin": {
+    "ymlgen": "./dist/cli.js"
+  },
+  "scripts": {
+    "test-cli": "ts-node lib/cli.ts '**/*.+(yaml|yml)'",
+    "test": "jest",
+    "start": "nodemon --watch 'lib/**/*.ts' --exec 'ts-node' lib/cli.ts",
+    "start:windows": "nodemon --watch 'lib/**/*.ts' --exec \"npx ts-node\" lib/cli.ts",
+    "create": "yarn build && yarn test",
+    "build": "tsc",
+    "local": "sudo yarn -G && ymlgen",
+    "refresh": "rm -rf ./node_modules ./yarn-lock.json && yarn"
+  },
+  "dependencies": {
+    "chalk": "4.1.2",
+    "clear": "^0.1.0",
+    "commander": "^9.4.0",
+    "figlet": "^1.5.2",
+    "yargs": "^17.5.1",
+    "yamljs": "0.3.0",
+    "glob": "^8.0.3"
+  },
+  "devDependencies": {
+    "@types/clear": "^0.1.2",
+    "@types/figlet": "^1.5.5",
+    "nodemon": "^2.0.19",
+    "@types/glob": "^7.2.0",
+    "@types/vscode": "^1.70.0",
+    "@types/yamljs": "^0.2.31"
+  },
+  "keywords": [
+    "Template",
+    "Generator",
+    "YAML",
+    "YML",
+    "Javascript"
+  ],
+  "directories": {
+    "dist": "dist"
+  },
+  "files": [
+    "dist"
+  ]
+}
