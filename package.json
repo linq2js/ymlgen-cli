@@ -2,7 +2,7 @@
   "name": "root",
   "private": true,
   "scripts": {
-    "build-all": "lerna run build --no-private --parallel --include-dependencies",
+    "build-all": "lerna run build --no-private --parallel",
     "test-all": "lerna run test --no-private --parallel",
     "docs": "npx typedoc",
     "publish-all": "lerna publish",
