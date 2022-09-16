@@ -8,6 +8,8 @@ export type WriteOptions = StringConvertionOptions & { autoTrim?: AutoTrim };
 
 export type TemplateConfigs = { output: string; generator: string };
 
+export type ConfigResolver = (config: string, value: string) => boolean;
+
 export type GenerationContext = {
   readonly dataFile: string;
   readonly texts: string[];
@@ -39,7 +41,11 @@ const isDataFile = (content: string) => {
   return content.trimStart().startsWith("# ymlgen");
 };
 
-const readConfigs = (dir: string, content: string) => {
+const readConfigs = (
+  dir: string,
+  content: string,
+  configResolver?: ConfigResolver
+) => {
   let defaultOutput = "";
   let defaultGenerator = "";
   let defaultSelect = "";
@@ -87,7 +93,9 @@ const readConfigs = (dir: string, content: string) => {
         }
         break;
       default:
-        throw new Error(`Invalid config ${name}`);
+        if (!configResolver?.(name, value)) {
+          throw new Error(`Invalid config ${name}`);
+        }
     }
     return "";
   });
@@ -125,11 +133,13 @@ const processFile = async <T>(
   fileName: string,
   content: string,
   getGenerator: (generatorName: string) => Promise<TextGenerator<T>>,
-  writeFile: (fileName: string, content: string) => Promise<void>
+  writeFile: (fileName: string, content: string) => Promise<void>,
+  configResolver?: ConfigResolver
 ) => {
   const { generators, importedData, onDone, onFail, onSuccess } = readConfigs(
     dirname(dataFile),
-    content
+    content,
+    configResolver
   );
 
   let error: any;

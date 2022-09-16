@@ -7,7 +7,7 @@
     "ymlgen": "./dist/cli.js"
   },
   "scripts": {
-    "test": "ts-node lib/cli.ts '**/*.+(yaml|yml)'",
+    "test-cli": "ts-node lib/cli.ts '**/*.+(yaml|yml)'",
     "prepublishOnly": "yarn test && yarn && yarn build",
     "start": "nodemon --watch 'lib/**/*.ts' --exec 'ts-node' lib/cli.ts",
     "start:windows": "nodemon --watch 'lib/**/*.ts' --exec \"npx ts-node\" lib/cli.ts",
