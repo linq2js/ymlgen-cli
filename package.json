@@ -6,7 +6,7 @@
     "test-all": "lerna run test --no-private --parallel",
     "docs": "npx typedoc",
     "publish-all": "lerna publish",
-    "bootstrap": "lerna bootstrap"
+    "bootstrap": "npx lerna bootstrap --hoist"
   },
   "dependencies": {},
   "devDependencies": {
