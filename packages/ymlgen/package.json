@@ -5,7 +5,7 @@
   "types": "dist/main.d.ts",
   "scripts": {
     "test": "jest",
-    "prepublishOnly": "yarn test && yarn && yarn build",
+    "prepublishOnly": "yarn test && yarn build",
     "create": "yarn build && yarn test",
     "build": "tsc"
   },
@@ -30,5 +30,5 @@
   "files": [
     "dist"
   ],
-  "gitHead": "aba8f789301dbf1cf0b414cb13bfc21f752a8780"
+  "gitHead": "498356f264d3de2caaecb95cce723c7c60c10f26"
 }
