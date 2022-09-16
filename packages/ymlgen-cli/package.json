@@ -1,6 +1,6 @@
 {
   "name": "ymlgen-cli",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "main": "./dist/main.js",
   "types": "dist/main.d.ts",
   "bin": {
@@ -23,7 +23,7 @@
     "commander": "^9.4.0",
     "figlet": "^1.5.2",
     "glob": "^8.0.3",
-    "ymlgen": "^0.0.7"
+    "ymlgen": "^0.0.8"
   },
   "keywords": [
     "Template",
