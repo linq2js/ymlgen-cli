@@ -69,7 +69,8 @@ const main = async () => {
                           `The output file is generated successfully: ${generatedFile}`
                         )
                       )
-                    )
+                    ),
+                    () => true
                   );
                 } catch (ex) {
                   console.log(file, chalk.red(ex));
