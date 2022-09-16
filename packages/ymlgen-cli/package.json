@@ -8,7 +8,7 @@
   },
   "scripts": {
     "test-cli": "ts-node lib/cli.ts '**/*.+(yaml|yml)'",
-    "prepublishOnly": "yarn test && yarn && yarn build",
+    "prepublishOnly": "yarn test && yarn build",
     "start": "nodemon --watch 'lib/**/*.ts' --exec 'ts-node' lib/cli.ts",
     "start:windows": "nodemon --watch 'lib/**/*.ts' --exec \"npx ts-node\" lib/cli.ts",
     "create": "yarn build && yarn test",
@@ -38,5 +38,5 @@
   "files": [
     "dist"
   ],
-  "gitHead": "c3113f7fee6f387831eada72376ad44e3d2aa877"
+  "gitHead": "961e4514e7d06f233961c659e2ae3b92f72736ab"
 }
