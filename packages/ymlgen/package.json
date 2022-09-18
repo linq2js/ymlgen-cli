@@ -1,6 +1,6 @@
 {
   "name": "ymlgen",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "main": "./dist/main.js",
   "types": "dist/main.d.ts",
   "scripts": {
@@ -15,8 +15,8 @@
     "commander": "^9.4.0",
     "figlet": "^1.5.2",
     "glob": "^8.0.3",
-    "yamljs": "0.3.0",
-    "lodash": "4.17.21"
+    "lodash": "4.17.21",
+    "yamljs": "0.3.0"
   },
   "keywords": [
     "Template",
