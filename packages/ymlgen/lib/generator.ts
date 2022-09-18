@@ -1,7 +1,7 @@
 import { parse } from "yamljs";
 import { dirname, resolve, extname } from "path";
 import * as fs from "fs";
-
+import { merge } from "lodash";
 export type AutoTrim = "start-end" | "all" | boolean;
 
 export type WriteOptions = StringConvertionOptions & { autoTrim?: AutoTrim };
@@ -9,6 +9,8 @@ export type WriteOptions = StringConvertionOptions & { autoTrim?: AutoTrim };
 export type TemplateConfigs = { output: string; generator: string };
 
 export type ConfigResolver = (config: string, value: string) => boolean;
+
+export type IncludeFileReader = (dir: string, name: string) => {};
 
 export type GenerationContext = {
   readonly dataFile: string;
@@ -41,10 +43,26 @@ const isDataFile = (content: string) => {
   return content.trimStart().startsWith("# ymlgen");
 };
 
+const defaultIncludeFileReader: IncludeFileReader = (
+  dir: string,
+  name: string
+) => {
+  const importFilePath = resolve(dir, name);
+  const importFileContent = fs.readFileSync(importFilePath, "utf-8");
+  const importExt = (extname(name) ?? "").toLowerCase();
+  const data = importExt.endsWith(".json")
+    ? // support JSON file
+      JSON.parse(importFileContent)
+    : // unless using yaml parser
+      parse(importFileContent);
+  return data;
+};
+
 const readConfigs = (
   dir: string,
   content: string,
-  configResolver?: ConfigResolver
+  configResolver?: ConfigResolver,
+  includeFileReader = defaultIncludeFileReader
 ) => {
   let defaultOutput = "";
   let defaultGenerator = "";
@@ -58,15 +76,9 @@ const readConfigs = (
   content.replace(/# ymlgen:([^\s]+) ([^\n]+)/g, (_, name, value: string) => {
     value = value.trim();
     switch (name) {
-      case "import":
-        const importFilePath = resolve(dir, value);
-        const importFileContent = fs.readFileSync(importFilePath, "utf-8");
-        const importExt = (extname(value) ?? "").toLowerCase();
-        const data = importExt.endsWith(".json")
-          ? // support JSON file
-            JSON.parse(importFileContent)
-          : // unless using yaml parser
-            parse(importFileContent);
+      case "merge":
+        if (!includeFileReader) return "";
+        const data = includeFileReader(dir, value);
         importedData.push(data);
         break;
       case "success":
@@ -134,12 +146,14 @@ const processFile = async <T>(
   content: string,
   getGenerator: (generatorName: string) => Promise<TextGenerator<T>>,
   writeFile: (fileName: string, content: string) => Promise<void>,
-  configResolver?: ConfigResolver
+  configResolver?: ConfigResolver,
+  includeFileReader?: IncludeFileReader
 ) => {
   const { generators, importedData, onDone, onFail, onSuccess } = readConfigs(
     dirname(dataFile),
     content,
-    configResolver
+    configResolver,
+    includeFileReader
   );
 
   let error: any;
@@ -167,14 +181,19 @@ const processFile = async <T>(
               return;
             }
             const selectedData = selectData(subData, g.select);
-            Object.assign(selectedData, ...importedData, privateData);
+            const finalData = merge(
+              {},
+              ...importedData,
+              privateData,
+              selectedData
+            );
             const [fileName, generatorName] = key.split(":");
             const customGenerator = generatorName
               ? await getGenerator(generatorName)
               : generator;
             const content = await generateText(
               dataFile,
-              selectedData,
+              finalData,
               customGenerator
             );
             await writeFile(g.output.replace("**", fileName), content);
@@ -183,10 +202,10 @@ const processFile = async <T>(
           return;
         }
         const selectedData = selectData(data, g.select);
-        Object.assign(selectedData, ...importedData);
+        const finalData = merge({}, ...importedData, selectedData);
         const generatedText = await generateText(
           dataFile,
-          selectedData,
+          finalData,
           generator
         );
         await writeFile(g.output.replace("*", fileName), generatedText);
@@ -334,4 +353,4 @@ const createContext = (
   return context;
 };
 
-export { processFile, isDataFile };
+export { processFile, isDataFile, defaultIncludeFileReader };

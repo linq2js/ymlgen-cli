@@ -83,3 +83,37 @@ test("select", async () => {
   );
   expect(results).toEqual(["test.js:1"]);
 });
+
+test("merge", async () => {
+  const results: string[] = [];
+  const content = `
+    # ymlgen:output *.js    
+    # ymlgen:generator test
+    # ymlgen:merge abc
+    
+    prop1:
+      prop2:
+        prop3: 1
+  `;
+  await processFile(
+    "test.yml",
+    "test",
+    content,
+    async (_) => {
+      return async ({ data, write }) => {
+        await write(JSON.stringify(data));
+      };
+    },
+    createFileWriter(results),
+    undefined,
+    () => ({ prop1: { prop2: { prop4: 2 } } })
+  );
+  expect(JSON.parse(results[0].substring(8))).toEqual({
+    prop1: {
+      prop2: {
+        prop3: 1,
+        prop4: 2,
+      },
+    },
+  });
+});
