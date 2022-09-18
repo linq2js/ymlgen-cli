@@ -117,3 +117,46 @@ test("merge", async () => {
     },
   });
 });
+
+test("rawData", async () => {
+  const results: string[] = [];
+  const content = `
+    # ymlgen:output *.js    
+    # ymlgen:generator test
+    # ymlgen:merge abc
+    
+    prop1:
+      prop2:
+        prop3: 1
+  `;
+  await processFile(
+    "test.yml",
+    "test",
+    content,
+    async (_) => {
+      return async ({ data, rawData, write }) => {
+        await write(JSON.stringify({ data, rawData }));
+      };
+    },
+    createFileWriter(results),
+    undefined,
+    () => ({ prop1: { prop2: { prop4: 2 } } })
+  );
+  expect(JSON.parse(results[0].substring(8))).toEqual({
+    rawData: {
+      prop1: {
+        prop2: {
+          prop3: 1,
+        },
+      },
+    },
+    data: {
+      prop1: {
+        prop2: {
+          prop3: 1,
+          prop4: 2,
+        },
+      },
+    },
+  });
+});

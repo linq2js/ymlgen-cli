@@ -17,6 +17,7 @@ export type GenerationContext = {
   readonly texts: string[];
   readonly options: WriteOptions;
   readonly data: any;
+  readonly rawData: any;
   readonly key: any;
   $each: typeof $each;
   $use: typeof $use;
@@ -194,6 +195,7 @@ const processFile = async <T>(
             const content = await generateText(
               dataFile,
               finalData,
+              selectedData,
               customGenerator
             );
             await writeFile(g.output.replace("**", fileName), content);
@@ -206,6 +208,7 @@ const processFile = async <T>(
         const generatedText = await generateText(
           dataFile,
           finalData,
+          selectedData,
           generator
         );
         await writeFile(g.output.replace("*", fileName), generatedText);
@@ -221,6 +224,7 @@ const processFile = async <T>(
 const generateText = async <T>(
   dataFile: string,
   data: unknown,
+  rawData: unknown,
   generator: TextGenerator<T>
 ) => {
   const texts: string[] = [];
@@ -229,6 +233,7 @@ const generateText = async <T>(
     dataFile,
     texts,
     data,
+    rawData,
     options
   );
   await generator(context as any);
@@ -286,6 +291,7 @@ const createContext = (
   dataFile: string,
   texts: string[],
   data: unknown,
+  rawData: unknown,
   options: WriteOptions,
   extraProps?: Record<string, unknown>
 ): GenerationContext => {
@@ -295,11 +301,12 @@ const createContext = (
     dataFile,
     texts,
     data,
+    rawData,
     options,
     $each,
     $use,
     extends(newData: unknown, newExtraProps?: any) {
-      return createContext(dataFile, texts, newData, options, {
+      return createContext(dataFile, texts, newData, rawData, options, {
         ...extraProps,
         ...newExtraProps,
       });
