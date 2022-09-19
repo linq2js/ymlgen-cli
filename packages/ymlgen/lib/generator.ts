@@ -1,5 +1,5 @@
 import { parse } from "yamljs";
-import { dirname, resolve, extname } from "path";
+import { resolve, extname } from "path";
 import * as fs from "fs";
 import { merge } from "lodash";
 export type AutoTrim = "start-end" | "all" | boolean;
@@ -10,7 +10,23 @@ export type TemplateConfigs = { output: string; generator: string };
 
 export type ConfigResolver = (config: string, value: string) => boolean;
 
-export type IncludeFileReader = (dir: string, name: string) => {};
+export type IncludeFileReader = (dataDir: string, name: string) => {};
+
+export type GeneratorFactory<T> = (
+  generatorName: string
+) => Promise<TextGenerator<T>>;
+
+export type ProcessFileOptions<T> = {
+  generatorWorkspaceDir: string;
+  dataFileWorkspaceDir: string;
+  dataFile: string;
+  fileName: string;
+  content: string;
+  getGenerator: GeneratorFactory<T>;
+  writeFile: (fileName: string, content: string) => Promise<void>;
+  configResolver?: ConfigResolver;
+  includeFileReader?: IncludeFileReader;
+};
 
 export type GenerationContext = {
   readonly dataFile: string;
@@ -45,10 +61,10 @@ const isDataFile = (content: string) => {
 };
 
 const defaultIncludeFileReader: IncludeFileReader = (
-  dir: string,
+  dataDir: string,
   name: string
 ) => {
-  const importFilePath = resolve(dir, name);
+  const importFilePath = resolve(dataDir, name);
   const importFileContent = fs.readFileSync(importFilePath, "utf-8");
   const importExt = (extname(name) ?? "").toLowerCase();
   const data = importExt.endsWith(".json")
@@ -60,7 +76,7 @@ const defaultIncludeFileReader: IncludeFileReader = (
 };
 
 const readConfigs = (
-  dir: string,
+  dataDir: string,
   content: string,
   configResolver?: ConfigResolver,
   includeFileReader = defaultIncludeFileReader
@@ -79,7 +95,7 @@ const readConfigs = (
     switch (name) {
       case "merge":
         if (!includeFileReader) return "";
-        const data = includeFileReader(dir, value);
+        const data = includeFileReader(dataDir, value);
         importedData.push(data);
         break;
       case "success":
@@ -141,17 +157,19 @@ const selectData = (data: any, path: string) => {
   return path.split(".").reduce((prev, p) => prev?.[p], data);
 };
 
-const processFile = async <T>(
-  dataFile: string,
-  fileName: string,
-  content: string,
-  getGenerator: (generatorName: string) => Promise<TextGenerator<T>>,
-  writeFile: (fileName: string, content: string) => Promise<void>,
-  configResolver?: ConfigResolver,
-  includeFileReader?: IncludeFileReader
-) => {
+const processFile = async <T>({
+  generatorWorkspaceDir,
+  dataFileWorkspaceDir: _,
+  dataFile,
+  content,
+  configResolver,
+  includeFileReader,
+  getGenerator,
+  fileName,
+  writeFile,
+}: ProcessFileOptions<T>) => {
   const { generators, importedData, onDone, onFail, onSuccess } = readConfigs(
-    dirname(dataFile),
+    resolve(generatorWorkspaceDir, "data"),
     content,
     configResolver,
     includeFileReader

@@ -58,20 +58,34 @@ const main = async () => {
                     return;
                   }
 
-                  await processFile(
-                    file,
-                    path.basename(file, ext),
-                    content,
-                    resolver,
-                    createFileWriter(path.dirname(file), (generatedFile) =>
-                      console.log(
-                        chalk.green(
-                          `The output file is generated successfully: ${generatedFile}`
-                        )
-                      )
+                  if (!require.main) {
+                    console.log(chalk.cyan("No package.json found"));
+                    return;
+                  }
+
+                  const projectRoot = path.dirname(require.main.path);
+
+                  await processFile({
+                    generatorWorkspaceDir: path.resolve(
+                      projectRoot,
+                      "./ymlgen"
                     ),
-                    () => true
-                  );
+                    dataFileWorkspaceDir: projectRoot,
+                    dataFile: file,
+                    fileName: path.basename(file, ext),
+                    content,
+                    getGenerator: resolver,
+                    writeFile: createFileWriter(
+                      path.dirname(file),
+                      (generatedFile) =>
+                        console.log(
+                          chalk.green(
+                            `The output file is generated successfully: ${generatedFile}`
+                          )
+                        )
+                    ),
+                    includeFileReader: () => ({}),
+                  });
                 } catch (ex) {
                   console.log(file, chalk.red(ex));
                   hasError = true;
