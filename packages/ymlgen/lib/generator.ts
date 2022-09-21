@@ -53,7 +53,7 @@ export type EachOptions<T> = {
 
 export type TextGenerator<TExtra> = (
   context: GenerationContext & TExtra
-) => void | Promise<void>;
+) => void | Promise<void> | TextGenerator<any> | Promise<TextGenerator<any>>;
 
 export type StringConvertionOptions = {};
 
@@ -255,7 +255,11 @@ const generateText = async <T>(
     rawData,
     options
   );
-  await generator(context as any);
+  while (true) {
+    let result = await generator(context as any);
+    if (typeof result !== "function") break;
+    generator = result;
+  }
   return texts.join("");
 };
 
