@@ -366,8 +366,16 @@ const createContext = (
           let text: string;
           const value = values.shift();
           if (typeof value === "function") {
-            const result = await value(context.extends(data));
-            text = convertToString(result);
+            const childContext = context.extends(data);
+            let f = value;
+            while (true) {
+              const result = await f(childContext);
+              if (typeof result !== "function") {
+                text = convertToString(result);
+                break;
+              }
+              f = result;
+            }
           } else {
             text = convertToString(value);
           }
