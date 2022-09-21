@@ -70,10 +70,45 @@ test("custom generator", async () => {
   expect(results).toEqual(["test.js:gen1", "test.ts:gen2"]);
 });
 
+test("$each", async () => {
+  const results: string[] = [];
+  const content = `    
+    # ymlgen:generator abc
+    # ymlgen:output *.js
+    prop: [1, 2, 3]
+  `;
+  const getGenerator: GeneratorFactory<unknown> = async () => {
+    return async ({ write, data, $each }) => {
+      await write()`
+        BEGIN${"aaa"}
+        ${$each(data.prop, async ({ write, data }) => write(data), {
+          start: "list1",
+        })}
+        ${$each(data.prop, async ({ write, data }) => write(data), {
+          start: "list2",
+        })}
+        END`;
+    };
+  };
+  const writeFile = createFileWriter(results);
+
+  await processFile({
+    generatorWorkspaceDir: "",
+    dataFileWorkspaceDir: "",
+    dataFile: "test.yml",
+    fileName: "test",
+    content,
+    getGenerator,
+    writeFile,
+  });
+
+  console.log(results);
+});
+
 test("select", async () => {
   const results: string[] = [];
   const content = `
-    # ymlgen:output *.js    
+    # ymlgen:output *.js
     # ymlgen:generator test
     # ymlgen:select prop1.prop2
     
@@ -187,4 +222,46 @@ test("rawData", async () => {
       },
     },
   });
+});
+
+test("passing extra props down", async () => {
+  const results: string[] = [];
+  const content = `    
+    # ymlgen:generator abc
+    # ymlgen:output *.js
+    prop: [1, 2, 3]
+  `;
+  const renderer1: TextGenerator<{ rootData: string }> = ({
+    rootData,
+    write,
+    $use,
+  }) => {
+    write(rootData);
+    write($use(undefined, renderer2));
+  };
+  const renderer2: TextGenerator<{ rootData: string }> = ({
+    rootData,
+    write,
+  }) => {
+    write(rootData);
+  };
+  const getGenerator: GeneratorFactory<unknown> = async () => {
+    return ({ write, $use, extra }) => {
+      extra({ rootData: "root" });
+      write($use(undefined, renderer1));
+    };
+  };
+  const writeFile = createFileWriter(results);
+
+  await processFile({
+    generatorWorkspaceDir: "",
+    dataFileWorkspaceDir: "",
+    dataFile: "test.yml",
+    fileName: "test",
+    content,
+    getGenerator,
+    writeFile,
+  });
+
+  expect(results).toEqual(["test.js:rootroot"]);
 });

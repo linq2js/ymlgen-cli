@@ -40,13 +40,14 @@ export type GenerationContext = {
   extends(data: unknown, extraProps?: unknown): GenerationContext;
   write(...values: any[]): any;
   configure(options: WriteOptions): void;
+  extra(values: Record<string, any>): void;
 };
 
 export type EachOptions<T> = {
-  sep?: TextGenerator<T>;
-  start?: TextGenerator<T>;
-  end?: TextGenerator<T>;
-  alt?: TextGenerator<T>;
+  sep?: TextGenerator<T> | string;
+  start?: TextGenerator<T> | string;
+  end?: TextGenerator<T> | string;
+  alt?: TextGenerator<T> | string;
   extra?: any;
 };
 
@@ -323,6 +324,9 @@ const createContext = (
     options,
     $each,
     $use,
+    extra(values: Record<string, any>) {
+      extraProps = Object.assign({}, extraProps, values);
+    },
     extends(newData: unknown, newExtraProps?: any) {
       return createContext(dataFile, texts, newData, rawData, options, {
         ...extraProps,
